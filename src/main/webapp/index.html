@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script src="assets/js/controllers.js"></script>
+</head>
+<body ng-app="UserManagementApp">
+
+<h1>User Management App</h1>
+
+<div ng-controller="UsersCtrl">
+    <button ng-click="toggle()">All users</button>
+    <table ng-hide="isInvisible">
+        <tr>
+            <td>Id</td>
+            <td>First name</td>
+            <td>Last name</td>
+            <td>Birthday</td>
+        </tr>
+        <tr ng-repeat="user in users">
+            <td>{{user.id}}</td>
+            <td>{{user.firstname}}</td>
+            <td>{{user.lastname}}</td>
+            <td>{{user.birthday}}</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

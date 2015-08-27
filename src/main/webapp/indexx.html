@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src =""/>
+    <script type="text/javascript">
+
+        var restUrl/* = 'rest/users'*/;
+        $(document).ready(
+            function() {
+                $.getJSON('rest/users', {
+                    ajax: 'true'
+                }, function (data) {
+                    // what is it
+                    if (/*$.isEmptyObject(data)*/true) {
+                        $('<h3>No users yet</h3>' +
+                          '<br/>' +
+                          '<a href="rest/users/add">Create new user</a>'
+                        ).appendTo($('#users'));
+                    }
+                    else {
+                        var table = $('<table>').appendTo($('#users'));
+                        $('<tr/>').appendTo(table)
+                                .append($('<td/>').text('Id'))
+                                .append($('<td/>').text('Firstname'))
+                                .append($('<td/>').text('Lastname'))
+                                .append($('<td/>').text('Birthday'));
+
+                        $(data).each(function (i, project) {
+                            $('<tr/>').appendTo(table)
+                                .append($('<td/>').text(project.id))
+                                .append($('<td/>').text(project.firstname))
+                                .append($('<td/>').text(project.lastname))
+                                .append($('<td/>').text(project.birthday));
+                        });
+                    }
+                });
+            }
+        );
+    </script>
+</head>
+<body>
+    <h1>User Management application</h1>
+
+
+
+    <div id="users"></div>
+</body>
+</html>
