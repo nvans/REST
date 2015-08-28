@@ -1,7 +1,11 @@
 package com.github.nvans.dao;
 
 import com.github.nvans.domain.User;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -15,9 +19,12 @@ import java.util.List;
  * @author Ivan Konovalov
  */
 @Repository
-public class UserDaoImpl implements UserDao, InitializingBean {
+public class UserDaoImplStub implements UserDao, InitializingBean {
 
     private List<User> users = new ArrayList<>();
+
+    @Autowired
+    SessionFactory sessionFactory;
 
     @Override
     public List<User> findByFirstname(String firstname) {
@@ -76,6 +83,31 @@ public class UserDaoImpl implements UserDao, InitializingBean {
     @Override
     public List<User> findAllUsers() {
         return users;
+    }
+
+    @Override
+    public void save(User user) {
+
+        System.out.println(user);
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = this.sessionFactory.openSession();
+            tx = session.beginTransaction();
+            session.persist(user);
+
+            tx.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+            if (!tx.wasCommitted()) {
+                tx.rollback();
+            }//not much doing but a good practice
+            session.flush(); //this is where I think things will start working.
+            session.close();
+        }
     }
 
     @Override

@@ -43,4 +43,21 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllUsers() {
         return userDao.findAllUsers();
     }
+
+    @Override
+    public void save(User user) {
+
+//        Date date = new  Date();
+//
+//        if (user.getCreateTS() == null) {
+//            user.setCreateTS(date);
+//        }
+//
+//        user.setLastUpdateTS(date);
+//
+//        System.out.println(user.getCreateTS().toString());
+//        System.out.println(user.getLastUpdateTS().toString());
+
+        userDao.save(user);
+    }
 }

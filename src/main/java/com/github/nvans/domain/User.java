@@ -2,6 +2,7 @@ package com.github.nvans.domain;
 
 import com.github.nvans.utils.XmlDateAdapter;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
@@ -12,18 +13,30 @@ import java.util.Date;
  * @author Ivan Konovalov
  */
 @XmlRootElement
+@Entity
+@Table
 public class User {
 
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
     private Long id;
     private String firstname;
     private String lastname;
     private String username;
     private String password;
     private String email;
+
+    @Temporal(TemporalType.DATE)
     private Date birthday;
+
     private Boolean isActive;
+
+    @Column(updatable = false)
     private Date createTS;
+
     private Date lastUpdateTS;
+
 
     /* Getters and setters */
     // -->
@@ -107,6 +120,7 @@ public class User {
     public void setLastUpdateTS(Date lastUpdateTS) {
         this.lastUpdateTS = lastUpdateTS;
     }
+
     // <--
 
 

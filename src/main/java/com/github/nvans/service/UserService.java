@@ -21,4 +21,6 @@ public interface UserService {
     List<User> findByBirthday(LocalDate birthday);
 
     List<User> findAllUsers();
+
+    void save(User user);
 }
