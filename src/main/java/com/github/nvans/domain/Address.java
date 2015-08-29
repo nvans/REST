@@ -1,5 +1,6 @@
 package com.github.nvans.domain;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -7,17 +8,33 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Ivan Konovalov
  */
+@Entity
 @XmlRootElement
 public class Address {
 
+    @Id
+    @GeneratedValue
+    private Long id;
     private String zip;
     private String country;
     private String city;
     private String district;
     private String street;
 
+    @OneToOne
+    @PrimaryKeyJoinColumn
+    private User user;
+
     /* Getters and Setters */
     // -->
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getZip() {
         return zip;
     }
@@ -57,5 +74,14 @@ public class Address {
     public void setStreet(String street) {
         this.street = street;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     // <--
+
 }

@@ -1,6 +1,8 @@
 package com.github.nvans.controller;
 
+import com.github.nvans.domain.Address;
 import com.github.nvans.domain.User;
+import com.github.nvans.service.AddressService;
 import com.github.nvans.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,8 +25,11 @@ public class UserResource {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AddressService addressService;
+
     /**
-     * Retrieving all existing users from DB
+     * Retrieving all existing users from DB as JSON
      *
      * @return List with all users
      */
@@ -44,7 +49,10 @@ public class UserResource {
         user.setUsername("aaa");
         user.setPassword("aaa");
 
+
         userService.save(user);
+
+        System.out.println(userService.findByEmail("aaa@aaa.aa"));
 
         return userService.findAllUsers();
 
@@ -55,18 +63,35 @@ public class UserResource {
     @Path("/user")
     public String ggg() {
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(1989, 6, 28);
 
-        User user = new User();
-        user.setId(1L);
-        user.setFirstname("ivan");
+        Address address = new Address();
+        address.setCity("spb");
+        address.setCountry("rus");
+        address.setDistrict("district 9");
+        address.setStreet("str");
+        address.setZip("6");
+
+        addressService.save(address);
+
+
+        Address address2 = new Address();
+        address2.setCity("spb2");
+        address2.setCountry("rus2");
+        address2.setDistrict("district 9");
+        address2.setStreet("str2");
+        address2.setZip("62");
+
+        addressService.save(address2);
+
+
+        User user = userService.findById(1L);
         user.setLastname("nenenen");
-        user.setBirthday(cal.getTime());
-        user.setEmail("aaa@aaa.aa");
-        user.setIsActive(true);
-        user.setUsername("aaa");
-        user.setPassword("aaa");
+        user.setAddress(addressService.findById(1L));
+
+        userService.save(user);
+
+        user = userService.findById(1L);
+        user.setAddress(addressService.findById(2L));
 
         userService.save(user);
 

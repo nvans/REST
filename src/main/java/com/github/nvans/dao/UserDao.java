@@ -12,6 +12,8 @@ import java.util.List;
  */
 public interface UserDao {
 
+    User findById(Long id);
+
     List<User> findByFirstname(String firstname);
 
     List<User> findByLastname(String lastname);

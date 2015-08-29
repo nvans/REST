@@ -20,6 +20,11 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
+    public User findById(Long id) {
+        return userDao.findById(id);
+    }
+
+    @Override
     public List<User> findByFirstname(String firstname) {
         return userDao.findByFirstname(firstname);
     }
@@ -46,18 +51,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User user) {
-
-//        Date date = new  Date();
-//
-//        if (user.getCreateTS() == null) {
-//            user.setCreateTS(date);
-//        }
-//
-//        user.setLastUpdateTS(date);
-//
-//        System.out.println(user.getCreateTS().toString());
-//        System.out.println(user.getLastUpdateTS().toString());
-
-        userDao.save(user);
+        if (userDao.findByEmail(user.getEmail()) != null && user.getId() == null) {
+            return;
+        } else {
+            userDao.save(user);
+        }
     }
 }

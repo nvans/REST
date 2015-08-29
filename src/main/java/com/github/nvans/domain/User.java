@@ -15,16 +15,19 @@ import java.util.Date;
 @XmlRootElement
 @Entity
 @Table
+@PrimaryKeyJoinColumn(name = "user_id")
 public class User {
 
     @Id
     @GeneratedValue
-    @Column(name = "id")
+    @Column(name = "user_id")
     private Long id;
     private String firstname;
     private String lastname;
     private String username;
     private String password;
+
+    @Column(unique = true)
     private String email;
 
     @Temporal(TemporalType.DATE)
@@ -32,11 +35,19 @@ public class User {
 
     private Boolean isActive;
 
-    @Column(updatable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    @Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     private Date createTS;
 
-    @Column(insertable = false, columnDefinition = "TIMESTAMP DEFAULT NOW() ON UPDATE NOW()")
+    @Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT NOW() ON UPDATE NOW()")
     private Date lastUpdateTS;
+
+    @OneToOne
+    @JoinTable(name = "user_address")
+    private Address address;
+
+    @OneToOne
+    @JoinTable(name = "user_group")
+    private Group group;
 
 
     /* Getters and setters */
@@ -110,16 +121,24 @@ public class User {
         return createTS;
     }
 
-    public void setCreateTS(Date createTS) {
-        this.createTS = createTS;
-    }
-
     public Date getLastUpdateTS() {
         return lastUpdateTS;
     }
 
-    public void setLastUpdateTS(Date lastUpdateTS) {
-        this.lastUpdateTS = lastUpdateTS;
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     // <--
