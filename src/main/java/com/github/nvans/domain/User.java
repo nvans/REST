@@ -32,9 +32,10 @@ public class User {
 
     private Boolean isActive;
 
-    @Column(updatable = false)
+    @Column(updatable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     private Date createTS;
 
+    @Column(insertable = false, columnDefinition = "TIMESTAMP DEFAULT NOW() ON UPDATE NOW()")
     private Date lastUpdateTS;
 
 

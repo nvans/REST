@@ -23,6 +23,8 @@ public class UserDaoImplStub implements UserDao, InitializingBean {
 
     private List<User> users = new ArrayList<>();
 
+    private int counter = 0;
+
     @Autowired
     SessionFactory sessionFactory;
 
@@ -94,14 +96,15 @@ public class UserDaoImplStub implements UserDao, InitializingBean {
         try {
             session = this.sessionFactory.openSession();
             tx = session.beginTransaction();
-            session.persist(user);
-
+            if (counter == 0) {
+                session.persist(user);
+            } else session.update(user);
             tx.commit();
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-
+            counter++;
             if (!tx.wasCommitted()) {
                 tx.rollback();
             }//not much doing but a good practice

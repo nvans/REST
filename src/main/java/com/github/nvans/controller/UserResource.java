@@ -49,4 +49,28 @@ public class UserResource {
         return userService.findAllUsers();
 
     }
+
+    @GET
+    @Produces("text/plain")
+    @Path("/user")
+    public String ggg() {
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(1989, 6, 28);
+
+        User user = new User();
+        user.setId(1L);
+        user.setFirstname("ivan");
+        user.setLastname("nenenen");
+        user.setBirthday(cal.getTime());
+        user.setEmail("aaa@aaa.aa");
+        user.setIsActive(true);
+        user.setUsername("aaa");
+        user.setPassword("aaa");
+
+        userService.save(user);
+
+        return "ggg";
+
+    }
 }
