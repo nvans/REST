@@ -24,5 +24,5 @@ public interface UserService {
 
     List<User> findAllUsers();
 
-    void save(User user);
+    void save(User user) throws IllegalArgumentException;
 }

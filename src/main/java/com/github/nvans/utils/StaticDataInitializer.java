@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Created by nvans on 30.08.2015.
+ * Spring bean.
+ *
+ * Save predefined groups to database
+ * at start of application.
  *
  * @author Ivan Konovalov
  */
@@ -15,10 +18,17 @@ public class StaticDataInitializer {
     @Autowired
     private GroupDao groupDao;
 
+
+    /**
+     * Init method.
+     */
     public void initialize() {
         createGroups();
     }
 
+    /**
+     * Save all predefined groups
+     */
     @Transactional
     private void createGroups() {
         for (GroupType groupType : GroupType.values()) {

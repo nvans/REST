@@ -4,6 +4,7 @@ import com.github.nvans.domain.Address;
 import com.github.nvans.domain.User;
 import com.github.nvans.service.AddressService;
 import com.github.nvans.service.UserService;
+import com.github.nvans.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -23,7 +24,7 @@ import java.util.List;
 public class UserResource {
 
     @Autowired
-    private UserService userService;
+    private UserService userService = new UserServiceImpl();
 
     @Autowired
     private AddressService addressService;
@@ -44,12 +45,15 @@ public class UserResource {
         user.setLastname("konovalov");
         user.setBirthday(date);
         user.setEmail("aaa@aaa.aa");
-        user.setIsActive(true);
+        user.setIsActive(false);
         user.setUsername("aaa");
         user.setPassword("aaa");
 
-
-        userService.save(user);
+        try {
+            userService.save(user);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
 
         System.out.println(userService.findByEmail("aaa@aaa.aa"));
 

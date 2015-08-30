@@ -169,8 +169,10 @@ public class UserDaoImpl implements UserDao {
 
         Session session = null;
         Transaction tx = null;
+
         try {
             session = this.sessionFactory.openSession();
+
 
             tx = session.beginTransaction();
 

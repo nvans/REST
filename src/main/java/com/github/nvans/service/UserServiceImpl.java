@@ -54,11 +54,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(User user) {
+    public void save(User user) throws IllegalArgumentException {
         if (userDao.findByEmail(user.getEmail()) != null && user.getId() == null) {
-            return;
+            throw new IllegalArgumentException("*** User with this email exists ***");
         }
         else if (user.getId() == null){
+            // Set undefined group to new user
             user.setGroup(groupDao.getDefaultGroup());
         }
 

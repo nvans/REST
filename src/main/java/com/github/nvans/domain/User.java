@@ -112,7 +112,7 @@ public class User {
         this.birthday = birthday;
     }
 
-    public Boolean getIsActive() {
+    public Boolean isActive() {
         return isActive;
     }
 
