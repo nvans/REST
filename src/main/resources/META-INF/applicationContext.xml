@@ -25,6 +25,7 @@
               </property>
 
        </bean>
+
        <bean id="datasource"
              class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 
@@ -34,5 +35,7 @@
               <property name="password" value="taskplanner"/>
 
        </bean>
+
+       <bean class="com.github.nvans.utils.StaticDataInitializer" init-method="initialize"/>
 
 </beans>

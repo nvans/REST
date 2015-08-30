@@ -1,5 +1,6 @@
 package com.github.nvans.service;
 
+import com.github.nvans.dao.GroupDao;
 import com.github.nvans.dao.UserDao;
 import com.github.nvans.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private GroupDao groupDao;
 
     @Override
     public User findById(Long id) {
@@ -53,8 +57,11 @@ public class UserServiceImpl implements UserService {
     public void save(User user) {
         if (userDao.findByEmail(user.getEmail()) != null && user.getId() == null) {
             return;
-        } else {
-            userDao.save(user);
         }
+        else if (user.getId() == null){
+            user.setGroup(groupDao.findById(1L));
+        }
+
+        userDao.save(user);
     }
 }
