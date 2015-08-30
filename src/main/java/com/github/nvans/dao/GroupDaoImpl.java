@@ -1,7 +1,6 @@
 package com.github.nvans.dao;
 
 import com.github.nvans.domain.Group;
-import com.github.nvans.domain.User;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -26,11 +25,11 @@ public class GroupDaoImpl implements GroupDao {
     @Override
     public Group getDefaultGroup() {
 
-        return findById(1L);
+        return findById(1);
     }
 
     @Override
-    public Group findById(long id) {
+    public Group findById(Integer id) {
         Session session = null;
         Group group = null;
 

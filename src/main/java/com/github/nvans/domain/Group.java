@@ -14,29 +14,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Group {
 
     @Id
-    private Long id;
+    private Integer id;
 
     @Column(name = "group_name")
     private String name;
 
-    @OneToOne
-    @PrimaryKeyJoinColumn(name = "user_id")
-    private User user;
+//    @OneToOne
+//    @PrimaryKeyJoinColumn(name = "user_id")
+//    private User user;
 
     public Group() {
 
     }
 
-    public Group(Long id, String name) {
+    public Group(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -47,13 +47,5 @@ public class Group {
     public void setName(String name) {
         this.name = name;
     }
-
-//    public User getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
 
 }

@@ -13,7 +13,7 @@ public interface GroupDao {
 
     Group getDefaultGroup();
 
-    Group findById(long id);
+    Group findById(Integer id);
 
     List<Group> findAllGroups();
 

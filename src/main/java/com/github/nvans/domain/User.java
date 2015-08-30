@@ -1,10 +1,12 @@
 package com.github.nvans.domain;
 
-import com.github.nvans.utils.XmlDateAdapter;
+import com.github.nvans.utils.converters.LocalDatePersistenceConverter;
+import com.github.nvans.utils.converters.XmlDateConverter;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -30,8 +32,9 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @Temporal(TemporalType.DATE)
-    private Date birthday;
+//    @Temporal(TemporalType.DATE)
+    @Convert(converter = LocalDatePersistenceConverter.class)
+    private LocalDate birthday;
 
     private Boolean isActive;
 
@@ -100,12 +103,12 @@ public class User {
         this.email = email;
     }
 
-    @XmlJavaTypeAdapter(value = XmlDateAdapter.class)
-    public Date getBirthday() {
+    @XmlJavaTypeAdapter(value = XmlDateConverter.class)
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 

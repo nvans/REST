@@ -1,25 +1,25 @@
 package com.github.nvans.domain;
 
 /**
- * Created by nvans on 30.08.2015.
+ * Predefined groups
  *
  * @author Ivan Konovalov
  */
 public enum GroupType {
-    UNDEFINED(1L, "UNDEFINED"),
-    MANAGERS(2L, "MANAGERS"),
-    DEVELOPERS(3L, "DEVELOPERS"),
-    TESTERS(4L, "TESTERS");
+    UNDEFINED(1, "UNDEFINED"),
+    MANAGERS(2, "MANAGERS"),
+    DEVELOPERS(3, "DEVELOPERS"),
+    TESTERS(4, "TESTERS");
 
-    private final Long id;
+    private final Integer id;
     private final String groupName;
 
-    GroupType(Long id, String groupName) {
+    GroupType(Integer id, String groupName) {
         this.id = id;
         this.groupName = groupName;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 

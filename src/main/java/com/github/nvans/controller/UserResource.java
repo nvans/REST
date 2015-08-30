@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -37,13 +37,12 @@ public class UserResource {
     @Produces("application/json")
     public List<User> getAllUsers() {
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(1989, 6, 28);
+        LocalDate date = LocalDate.of(1989, 6, 28);
 
         User user = new User();
         user.setFirstname("ivan");
         user.setLastname("konovalov");
-        user.setBirthday(cal.getTime());
+        user.setBirthday(date);
         user.setEmail("aaa@aaa.aa");
         user.setIsActive(true);
         user.setUsername("aaa");
