@@ -2,6 +2,8 @@ package com.github.nvans.dao;
 
 import com.github.nvans.domain.Group;
 
+import java.util.List;
+
 /**
  * Created by nvans on 30.08.2015.
  *
@@ -9,7 +11,11 @@ import com.github.nvans.domain.Group;
  */
 public interface GroupDao {
 
-    void save(Group group);
+    Group getDefaultGroup();
 
     Group findById(long id);
+
+    List<Group> findAllGroups();
+
+    void save(Group group);
 }

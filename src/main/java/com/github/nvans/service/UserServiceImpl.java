@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
         else if (user.getId() == null){
-            user.setGroup(groupDao.findById(1L));
+            user.setGroup(groupDao.getDefaultGroup());
         }
 
         userDao.save(user);

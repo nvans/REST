@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Group {
 
     @Id
-    @Column(name = "group_id")
     private Long id;
 
     @Column(name = "group_name")
