@@ -6,8 +6,8 @@ import com.github.nvans.utils.converters.XmlDateConverter;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * Created by nvans on 27.08.2015.
@@ -16,9 +16,9 @@ import java.util.Date;
  */
 @XmlRootElement
 @Entity
-@Table
+@Table(name = "Users")
 @PrimaryKeyJoinColumn(name = "user_id")
-public class User {
+public class User implements TimeStamped {
 
     @Id
     @GeneratedValue
@@ -38,11 +38,9 @@ public class User {
 
     private Boolean isActive;
 
-    @Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
-    private Date createTS;
+    private Timestamp createTS;
 
-    @Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT NOW() ON UPDATE NOW()")
-    private Date lastUpdateTS;
+    private Timestamp lastUpdateTS;
 
     @OneToOne
     @JoinTable(name = "user_address")
@@ -52,6 +50,10 @@ public class User {
     @JoinTable(name = "user_group")
     private Group group;
 
+//    @PreUpdate
+//    public void onUpdate() {
+//        lastUpdateTS = new Date();
+//    }
 
     /* Getters and setters */
     // -->
@@ -120,12 +122,20 @@ public class User {
         this.isActive = isActive;
     }
 
-    public Date getCreateTS() {
+    public Timestamp getCreateTS() {
         return createTS;
     }
 
-    public Date getLastUpdateTS() {
+    public void setCreateTS(Timestamp createTS) {
+        this.createTS = createTS;
+    }
+
+    public Timestamp getLastUpdateTS() {
         return lastUpdateTS;
+    }
+
+    public void setLastUpdateTS(Timestamp lastUpdateTS) {
+        this.lastUpdateTS = lastUpdateTS;
     }
 
     public Address getAddress() {
@@ -143,8 +153,12 @@ public class User {
     public void setGroup(Group group) {
         this.group = group;
     }
-
     // <--
+
+
+    public static void main(String[] args) {
+
+    }
 
 
 

@@ -45,7 +45,7 @@ public class UserResource {
         user.setLastname("konovalov");
         user.setBirthday(date);
         user.setEmail("aaa@aaa.aa");
-        user.setIsActive(false);
+        user.setIsActive(true);
         user.setUsername("aaa");
         user.setPassword("aaa");
 

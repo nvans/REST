@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Ivan Konovalov
  */
-@Repository
+@Repository(value = "userDao")
 public class UserDaoImpl implements UserDao {
 
     @Autowired
@@ -182,6 +182,29 @@ public class UserDaoImpl implements UserDao {
                 session.update(user);
             }
 
+            tx.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (!tx.wasCommitted()) {
+                tx.rollback();
+            }
+
+            session.flush();
+            session.close();
+        }
+    }
+
+    @Override
+    public void delete(User user) {
+        Session session = null;
+        Transaction tx = null;
+
+        try {
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+            session.delete(user);
             tx.commit();
 
         } catch (Exception e) {
