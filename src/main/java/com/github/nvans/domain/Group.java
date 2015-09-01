@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Ivan Konovalov
  */
 @Entity
-@Table(name = "Groups")
+@Table(name = "WORK_GROUPS")
 @XmlRootElement
 public class Group {
 
@@ -19,9 +19,6 @@ public class Group {
     @Column(name = "group_name")
     private String name;
 
-//    @OneToOne
-//    @PrimaryKeyJoinColumn(name = "user_id")
-//    private User user;
 
     public Group() {
 
@@ -32,6 +29,8 @@ public class Group {
         this.name = name;
     }
 
+    // Getters and setters
+    // -->
     public Integer getId() {
         return id;
     }
@@ -47,5 +46,5 @@ public class Group {
     public void setName(String name) {
         this.name = name;
     }
-
+    // <--
 }

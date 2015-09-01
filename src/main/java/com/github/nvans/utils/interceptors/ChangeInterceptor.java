@@ -14,7 +14,7 @@ import java.util.Arrays;
  *
  * @author Ivan Konovalov
  */
-public class AuditInterceptor extends EmptyInterceptor {
+public class ChangeInterceptor extends EmptyInterceptor {
 
     @Override
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {

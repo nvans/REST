@@ -6,15 +6,18 @@ import com.github.nvans.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by nvans on 27.08.2015.
  *
  * @author Ivan Konovalov
  */
-@Service
+@Service(value = "userService")
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -22,6 +25,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private GroupDao groupDao;
+
+    @Autowired
+    private Validator validator;
 
     @Override
     public User findById(Long id) {
@@ -39,6 +45,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByUsername(String username) {
+        return userDao.findByUsername(username);
+    }
+
+    @Override
     public User findByEmail(String email) {
         return userDao.findByEmail(email);
     }
@@ -53,16 +64,73 @@ public class UserServiceImpl implements UserService {
         return userDao.findAllUsers();
     }
 
+    /**
+     *
+     * User before saving processing
+     *
+     * @param user
+     * @throws IllegalArgumentException
+     */
     @Override
     public void save(User user) throws IllegalArgumentException {
+
+        // Disable update operation for inactive users
+        // -->
+        if (!user.isActive() && isChanged(user)) {
+            throw new IllegalArgumentException("*** User should be is activated before update ***");
+        }
+        // <--
+
+        // Bean validation
+        // -->
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+
+        if (constraintViolations.size() != 0) {
+            throw new IllegalArgumentException(
+                        constraintViolations.iterator().next().getMessage());
+        }
+        // <--
+
+
+        // Check email existing
+        // -->
         if (userDao.findByEmail(user.getEmail()) != null && user.getId() == null) {
             throw new IllegalArgumentException("*** User with this email exists ***");
         }
+        // <--
+
+        // Check username existing
+        // -->
+        else if (userDao.findByUsername(user.getUsername()) != null && user.getId() == null) {
+            throw new IllegalArgumentException("*** User with this username exists ***");
+        }
+        // <--
+
+        // Sets "UNDEFINED" group to new user
+        // -->
         else if (user.getId() == null){
-            // Set undefined group to new user
             user.setGroup(groupDao.getDefaultGroup());
         }
+        // <--
 
         userDao.save(user);
+
+    }
+
+    @Override
+    public void delete(User user) {
+        userDao.delete(user);
+    }
+
+    /**
+     * Check changes in user fields
+     *
+     * @param user
+     * @return true if users field changed and false otherwise
+     */
+    private boolean isChanged(User user) {
+        User testUser = findById(user.getId());
+
+        return !user.equals(testUser);
     }
 }

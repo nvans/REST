@@ -2,9 +2,16 @@ package com.github.nvans.domain;
 
 import com.github.nvans.utils.converters.LocalDatePersistenceConverter;
 import com.github.nvans.utils.converters.XmlDateConverter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -15,6 +22,7 @@ import java.time.LocalDate;
  * @author Ivan Konovalov
  */
 @XmlRootElement
+@XmlType(propOrder = {"id", "firstname", "lastname", "username", "password", "email", "birthday", "address", "group"})
 @Entity
 @Table(name = "Users")
 @PrimaryKeyJoinColumn(name = "user_id")
@@ -24,11 +32,21 @@ public class User implements TimeStamped {
     @GeneratedValue
     @Column(name = "user_id")
     private Long id;
+
+    @NotEmpty
     private String firstname;
+
+    @NotEmpty
     private String lastname;
+
+    @NotEmpty
+    @Column(unique = true)
     private String username;
+
+    @NotEmpty
     private String password;
 
+    @NotEmpty @Email
     @Column(unique = true)
     private String email;
 
@@ -36,6 +54,7 @@ public class User implements TimeStamped {
     @Convert(converter = LocalDatePersistenceConverter.class)
     private LocalDate birthday;
 
+    @XmlAttribute
     private Boolean isActive;
 
     private Timestamp createTS;
@@ -44,18 +63,14 @@ public class User implements TimeStamped {
 
     @OneToOne
     @JoinTable(name = "user_address")
+    @Cascade(CascadeType.ALL)
     private Address address;
 
     @OneToOne
     @JoinTable(name = "user_group")
     private Group group;
 
-//    @PreUpdate
-//    public void onUpdate() {
-//        lastUpdateTS = new Date();
-//    }
-
-    /* Getters and setters */
+    // Getters and Setters
     // -->
     public Long getId() {
         return id;
@@ -122,18 +137,24 @@ public class User implements TimeStamped {
         this.isActive = isActive;
     }
 
+    @XmlTransient
+    @Override
     public Timestamp getCreateTS() {
         return createTS;
     }
 
+    @Override
     public void setCreateTS(Timestamp createTS) {
         this.createTS = createTS;
     }
 
+    @XmlTransient
+    @Override
     public Timestamp getLastUpdateTS() {
         return lastUpdateTS;
     }
 
+    @Override
     public void setLastUpdateTS(Timestamp lastUpdateTS) {
         this.lastUpdateTS = lastUpdateTS;
     }
@@ -156,10 +177,34 @@ public class User implements TimeStamped {
     // <--
 
 
-    public static void main(String[] args) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (!firstname.equals(user.firstname)) return false;
+        if (!lastname.equals(user.lastname)) return false;
+        if (!username.equals(user.username)) return false;
+        if (!password.equals(user.password)) return false;
+        if (!email.equals(user.email)) return false;
+        if (birthday != null ? !birthday.equals(user.birthday) : user.birthday != null) return false;
+        if (createTS != null ? !createTS.equals(user.createTS) : user.createTS != null) return false;
+        return !(lastUpdateTS != null ? !lastUpdateTS.equals(user.lastUpdateTS) : user.lastUpdateTS != null);
 
     }
 
-
-
+    @Override
+    public int hashCode() {
+        int result = firstname.hashCode();
+        result = 31 * result + lastname.hashCode();
+        result = 31 * result + username.hashCode();
+        result = 31 * result + password.hashCode();
+        result = 31 * result + email.hashCode();
+        result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
+        result = 31 * result + (createTS != null ? createTS.hashCode() : 0);
+        result = 31 * result + (lastUpdateTS != null ? lastUpdateTS.hashCode() : 0);
+        return result;
+    }
 }

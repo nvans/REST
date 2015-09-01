@@ -14,8 +14,11 @@ app.controller("UsersCtrl", function($scope, $http) {
      *
      * @type {boolean}
      */
-    $scope.isInvisible = false;
-    $scope.toggle = function() {
-        $scope.isInvisible = !$scope.isInvisible;
+    $scope.isExists = function(obj) {
+        for(var i in obj) {
+            return obj.hasOwnProperty(i) ? true : false;
+        }
     }
+
+
 });

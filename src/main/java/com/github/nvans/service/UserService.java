@@ -18,6 +18,8 @@ public interface UserService {
 
     List<User> findByLastname(String lastname);
 
+    User findByUsername(String username);
+
     User findByEmail(String email);
 
     List<User> findByBirthday(LocalDate birthday);
@@ -25,4 +27,6 @@ public interface UserService {
     List<User> findAllUsers();
 
     void save(User user) throws IllegalArgumentException;
+
+    void delete(User user);
 }

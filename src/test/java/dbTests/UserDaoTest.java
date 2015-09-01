@@ -1,3 +1,5 @@
+package dbTests;
+
 import com.github.nvans.dao.UserDao;
 import com.github.nvans.domain.User;
 import org.junit.*;
@@ -29,13 +31,14 @@ public class UserDaoTest {
         userDao = (UserDao) ctx.getBean("userDao");
     }
 
+    // Clean resorces
     @After
     public void dispose() {
         userDao = null;
     }
 
     @Test
-    public void testSaveUser() {
+    public void testUserDao() {
         // New user initializing
         User user = new User();
 
@@ -51,7 +54,7 @@ public class UserDaoTest {
         userDao.save(user);
 
         // Get user from DB by id
-        User testUser = userDao.findById(1L);
+        User testUser = userDao.findById(user.getId());
 
         // Fields testing
         Assert.assertEquals("First names do not match", "firstname", testUser.getFirstname());
@@ -68,7 +71,7 @@ public class UserDaoTest {
         userDao.save(testUser);
 
         // Get changed instance of user from DB
-        testUser = userDao.findById(1L);
+        testUser = userDao.findById(user.getId());
 
         // Fields testing
         Assert.assertEquals("First names do not match", "changed", testUser.getFirstname());
@@ -79,11 +82,10 @@ public class UserDaoTest {
         userDao.delete(testUser);
 
         // Try to get deleted user
-        testUser = userDao.findById(1L);
+        testUser = userDao.findById(user.getId());
 
         // Removal mechanism test
         Assert.assertNull("User exists in DB. Check the removal mechanism.", testUser);
-
 
     }
 

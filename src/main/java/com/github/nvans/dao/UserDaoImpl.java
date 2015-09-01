@@ -2,11 +2,9 @@ package com.github.nvans.dao;
 
 import com.github.nvans.domain.User;
 import org.hibernate.*;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +20,12 @@ public class UserDaoImpl implements UserDao {
     @Autowired
     SessionFactory sessionFactory;
 
+    /**
+     * Retrieve user by id
+     *
+     * @param id
+     * @return
+     */
     @Override
     public User findById(Long id) {
         Session session = null;
@@ -40,6 +44,12 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
+    /**
+     *  Retrieve user by first name
+     *
+     * @param firstname
+     * @return
+     */
     @Override
     public List<User> findByFirstname(String firstname) {
         Session session = null;
@@ -62,6 +72,12 @@ public class UserDaoImpl implements UserDao {
         return users;
     }
 
+    /**
+     * Retrieve user by lastname
+     *
+     * @param lastname
+     * @return
+     */
     @Override
     public List<User> findByLastname(String lastname) {
 
@@ -85,6 +101,45 @@ public class UserDaoImpl implements UserDao {
         return users;
     }
 
+    /**
+     * Retrieve user by username
+     *
+     * @param username
+     * @return User or null
+     */
+    @Override
+    public User findByUsername(String username) {
+        Session session = null;
+        User user = null;
+
+        try {
+            session = sessionFactory.openSession();
+
+            Query query = session.createQuery(
+                    "SELECT u FROM User u WHERE u.username = :username"
+            ).setString("username", username);
+
+
+
+            user = (User) query.uniqueResult();
+
+        } catch (NonUniqueResultException e) {
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return user;
+    }
+
+    /**
+     * Retrieve user by email
+     *
+     * @param email
+     * @return User or null
+     */
     @Override
     public User findByEmail(String email) {
 
@@ -113,6 +168,12 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
+    /**
+     * Retrieve users by birthday
+     *
+     * @param birthday
+     * @return List of users
+     */
     @Override
     public List<User> findByBirthday(LocalDate birthday) {
 
@@ -136,6 +197,11 @@ public class UserDaoImpl implements UserDao {
         return users;
     }
 
+    /**
+     * Retrieve list of all users
+     *
+     * @return list of all users
+     */
     @Override
     public List<User> findAllUsers() {
         Session session = null;
@@ -145,7 +211,7 @@ public class UserDaoImpl implements UserDao {
             session = sessionFactory.openSession();
 
             Query query = session.createQuery(
-                "SELECT u FROM User u"
+                    "SELECT u FROM User u"
             );
 
             users.addAll(query.list());
@@ -160,7 +226,7 @@ public class UserDaoImpl implements UserDao {
 
     /**
      *
-     * Persisting user object to db
+     * Save/Update user instance to db
      *
      * @param user
      */
@@ -196,6 +262,11 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    /**
+     * Delete user
+     *
+     * @param user
+     */
     @Override
     public void delete(User user) {
         Session session = null;

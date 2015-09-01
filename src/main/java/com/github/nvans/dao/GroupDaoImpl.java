@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Ivan Konovalov
  */
-@Repository
+@Repository("groupDao")
 public class GroupDaoImpl implements GroupDao {
 
     @Autowired
@@ -24,7 +24,6 @@ public class GroupDaoImpl implements GroupDao {
 
     @Override
     public Group getDefaultGroup() {
-
         return findById(1);
     }
 

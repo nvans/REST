@@ -18,6 +18,8 @@ public interface UserDao {
 
     List<User> findByLastname(String lastname);
 
+    User findByUsername(String username);
+
     User findByEmail(String email);
 
     List<User> findByBirthday(LocalDate birthday);

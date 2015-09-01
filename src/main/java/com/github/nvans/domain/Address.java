@@ -4,7 +4,9 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Created by nvans on 27.08.2015.
+ * Address domain class.
+ *
+ * In my opinion, validation is not need for this class in this case.
  *
  * @author Ivan Konovalov
  */
@@ -21,11 +23,8 @@ public class Address {
     private String district;
     private String street;
 
-    @OneToOne
-    @PrimaryKeyJoinColumn
-    private User user;
 
-    /* Getters and Setters */
+    // Getters and Setters
     // -->
     public Long getId() {
         return id;
@@ -74,14 +73,31 @@ public class Address {
     public void setStreet(String street) {
         this.street = street;
     }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
     // <--
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Address address = (Address) o;
+
+        if (!zip.equals(address.zip)) return false;
+        if (!country.equals(address.country)) return false;
+        if (!city.equals(address.city)) return false;
+        if (!district.equals(address.district)) return false;
+        return street.equals(address.street);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = zip.hashCode();
+        result = 31 * result + country.hashCode();
+        result = 31 * result + city.hashCode();
+        result = 31 * result + district.hashCode();
+        result = 31 * result + street.hashCode();
+        return result;
+    }
 }

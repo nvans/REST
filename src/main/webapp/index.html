@@ -12,20 +12,28 @@
 
 <div ng-controller="UsersCtrl">
     <button ng-click="toggle()">All users</button>
-    <table ng-hide="isInvisible">
-        <tr>
-            <td>Id</td>
-            <td>First name</td>
-            <td>Last name</td>
-            <td>Birthday</td>
-        </tr>
-        <tr ng-repeat="user in users">
-            <td>{{user.id}}</td>
-            <td>{{user.firstname}}</td>
-            <td>{{user.lastname}}</td>
-            <td>{{user.birthday}}</td>
-        </tr>
-    </table>
+
+    <div ng-show="!isExists(users)">
+        <h3>You have no users yet.</h3>
+        <button>Add user</button>
+    </div>
+    <div ng-show="isExists(users)">
+        <table>
+            <tr>
+                <td>Id</td>
+                <td>First name</td>
+                <td>Last name</td>
+                <td>Birthday</td>
+            </tr>
+            <tr ng-repeat="user in users">
+                <td>{{user.id}}</td>
+                <td>{{user.firstname}}</td>
+                <td>{{user.lastname}}</td>
+                <td>{{user.birthday}}</td>
+                <td><button>Edit</button></td>
+            </tr>
+        </table>
+    </div>
 </div>
 </body>
 </html>

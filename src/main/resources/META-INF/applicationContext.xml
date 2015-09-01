@@ -20,7 +20,7 @@
 
               <!-- Interceptor -->
               <property name="entityInterceptor">
-                  <bean class="com.github.nvans.utils.interceptors.AuditInterceptor"/>
+                  <bean class="com.github.nvans.utils.interceptors.ChangeInterceptor"/>
               </property>
 
               <!-- Hibernate properties-->
@@ -60,5 +60,8 @@
 
        <!-- Database initializing -->
        <bean class="com.github.nvans.utils.StaticDataInitializer" init-method="initialize"/>
+    
+       <!-- Validator -->
+       <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
 </beans>

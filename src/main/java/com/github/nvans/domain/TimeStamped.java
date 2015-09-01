@@ -3,7 +3,10 @@ package com.github.nvans.domain;
 import java.sql.Timestamp;
 
 /**
- * Created by nvans on 31.08.2015.
+ * Interface for timestamps managing
+ * Using with ChangeInterceptor.
+ *
+ * @see com.github.nvans.utils.interceptors.ChangeInterceptor
  *
  * @author Ivan Konovalov
  */

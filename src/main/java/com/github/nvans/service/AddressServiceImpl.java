@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  *
  * @author Ivan Konovalov
  */
-@Service
+@Service(value = "addressService")
 public class AddressServiceImpl implements AddressService {
 
     @Autowired
@@ -21,8 +21,6 @@ public class AddressServiceImpl implements AddressService {
     public Address findById(Long id) {
         return addressDao.findById(id);
     }
-
-
 
     @Override
     public void save(Address address) {

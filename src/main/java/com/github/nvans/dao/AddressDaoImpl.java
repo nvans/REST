@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
  *
  * @author Ivan Konovalov
  */
-@Repository
+@Repository(value = "addressDao")
 public class AddressDaoImpl implements AddressDao {
 
     @Autowired
@@ -43,9 +43,10 @@ public class AddressDaoImpl implements AddressDao {
     }
 
 
+
     /**
      *
-     * Save
+     * Save/update object
      *
      * @param address
      */
@@ -64,6 +65,35 @@ public class AddressDaoImpl implements AddressDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            if (!tx.wasCommitted()) {
+                tx.rollback();
+            }
+
+            session.flush();
+            session.close();
+        }
+    }
+
+    /**
+     * Delete object
+     *
+     * @param address
+     */
+    @Override
+    public void delete(Address address) {
+        Session session = null;
+        Transaction tx = null;
+
+        try {
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+            session.delete(address);
+            tx.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
             if (!tx.wasCommitted()) {
                 tx.rollback();
             }
