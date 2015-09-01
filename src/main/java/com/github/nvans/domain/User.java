@@ -2,12 +2,14 @@ package com.github.nvans.domain;
 
 import com.github.nvans.utils.converters.LocalDatePersistenceConverter;
 import com.github.nvans.utils.converters.XmlDateConverter;
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -50,7 +52,6 @@ public class User implements TimeStamped {
     @Column(unique = true)
     private String email;
 
-//    @Temporal(TemporalType.DATE)
     @Convert(converter = LocalDatePersistenceConverter.class)
     private LocalDate birthday;
 

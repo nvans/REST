@@ -12,4 +12,6 @@ public interface AddressService {
     Address findById(Long id);
 
     void save(Address address);
+
+    void delete(Address address);
 }

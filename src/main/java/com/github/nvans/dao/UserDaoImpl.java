@@ -1,5 +1,6 @@
 package com.github.nvans.dao;
 
+import com.github.nvans.domain.Address;
 import com.github.nvans.domain.User;
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,10 +185,12 @@ public class UserDaoImpl implements UserDao {
             session = sessionFactory.openSession();
 
             Query query = session.createQuery(
-                    "SELECT u FROM User u WHERE u.birthday = birthday"
+                    "SELECT u FROM User u WHERE u.birthday = :birthday"
             );
 
+            query.setParameter("birthday", birthday);
             users.addAll(query.list());
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -288,6 +291,30 @@ public class UserDaoImpl implements UserDao {
             session.flush();
             session.close();
         }
+    }
+
+    @Override
+    public User findByAddress(Address address) {
+        Session session = null;
+        User user = null;
+
+        try {
+            session = sessionFactory.openSession();
+
+            Query query = session.createQuery(
+                    "SELECT u FROM User u WHERE u.address = :address"
+            );
+
+            query.setParameter("address", address);
+
+            user = (User) query.uniqueResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return user;
     }
 
 }

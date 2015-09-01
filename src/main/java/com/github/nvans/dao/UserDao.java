@@ -1,5 +1,6 @@
 package com.github.nvans.dao;
 
+import com.github.nvans.domain.Address;
 import com.github.nvans.domain.User;
 
 import java.time.LocalDate;
@@ -29,4 +30,6 @@ public interface UserDao {
     void save(User user);
 
     void delete(User user);
+
+    User findByAddress(Address address);
 }

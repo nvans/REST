@@ -1,5 +1,6 @@
 package com.github.nvans.service;
 
+import com.github.nvans.domain.Address;
 import com.github.nvans.domain.User;
 
 import java.time.LocalDate;
@@ -24,9 +25,12 @@ public interface UserService {
 
     List<User> findByBirthday(LocalDate birthday);
 
+
     List<User> findAllUsers();
 
     void save(User user) throws IllegalArgumentException;
 
     void delete(User user);
+
+    void deleteById(Long id);
 }

@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
         return userDao.findByBirthday(birthday);
     }
 
+
     @Override
     public List<User> findAllUsers() {
         return userDao.findAllUsers();
@@ -120,6 +121,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(User user) {
         userDao.delete(user);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        User user = userDao.findById(id);
+
+        if (user != null) {
+            userDao.delete(user);
+        }
     }
 
     /**

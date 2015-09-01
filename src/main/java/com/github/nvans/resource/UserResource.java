@@ -1,5 +1,6 @@
 package com.github.nvans.resource;
 
+import com.github.nvans.domain.Address;
 import com.github.nvans.domain.User;
 import com.github.nvans.service.AddressService;
 import com.github.nvans.service.UserService;
@@ -32,7 +33,7 @@ public class UserResource {
     /**
      * Retrieving all existing users from DB as JSON
      *
-     * @return List with all users
+     * @return List with all users or empty list
      */
     @GET
     @Produces("application/json")
@@ -44,33 +45,48 @@ public class UserResource {
 
     }
 
+
+    /**
+     * Retrieve user by id
+     *
+     * @param id
+     * @return
+     */
     @GET
     @Produces({"application/json", "text/html"})
     @Path("{id}")
-    public Response getUser(@PathParam("id") Long id) {
+    public User getUser(@PathParam("id") Long id) {
 
         User user = userService.findById(id);
 
-        if (user != null) {
-            return Response.status(Response.Status.OK).entity(user).build();
+        if (user == null) {
+            throw new RuntimeException("User with id = " + id + " not found.");
         }
 
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return user;
     }
 
 
+    /**
+     * Retrieve user creating form
+     *
+     * @return
+     */
     @GET
     @Produces("text/html")
     @Path("/new")
-    public String aaa() {
+    public String getUsersCreatingPage() {
 
-        return " <form method=\"post\">" +
-                "<input type=\"submit\" value=\"Submit\"/>\n" +
-                "    </form>";
+        return "<h1>User creating form</h1>";
     }
 
+    /**
+     * Create user
+     *
+     * @return
+     */
     @POST
-    @Consumes("application/x-www-form-urlencoded")
+//    @Consumes({"application/x-www-form-urlencoded", "application/json"})
     @Produces({"text/html"})
     @Path("/new")
     public Response createUser(
@@ -82,14 +98,7 @@ public class UserResource {
                    @FormParam("birthday") LocalDate birthday,
                    @FormParam("active") Boolean isActive*/) {
 
-//        User user = new User();
-//        user.setFirstname(firstname);
-//        user.setLastname(lastname);
-//        user.setUsername(username);
-//        user.setPassword(password);
-//        user.setEmail(email);
-//        user.setBirthday(birthday);
-//        user.setIsActive(isActive);
+
         User user = new User();
 
         user.setFirstname("firstname");
@@ -100,9 +109,15 @@ public class UserResource {
         user.setUsername("test");
         user.setPassword("test");
 
+        Address address = new Address();
+        address.setCountry("Russia");
+
+        user.setAddress(address);
+
         try {
             userService.save(user);
-
+            user.setAddress(address);
+            userService.save(user);
             return Response.seeOther(URI.create("" + user.getId())).build();
 
         } catch (IllegalArgumentException e) {
@@ -111,10 +126,58 @@ public class UserResource {
         }
     }
 
+
+    /**
+     * Retrieve users address
+     *
+     * @param id
+     * @return address
+     */
     @GET
-    @Path("test")
-    @Produces("text/plain")
-    public String test() {
-        return "test";
+    @Path("{id}/address")
+    @Produces("application/json")
+    public Address getUserAddress(@PathParam("id") Long id) {
+        User user = userService.findById(id);
+        Address address = null;
+
+        if (user != null) {
+            address = user.getAddress();
+        }
+
+        return address;
+
+    }
+
+    /**
+     * Delete address
+     *
+     * @param id
+     */
+    @DELETE
+    @Path("{id}/address")
+    @Produces("text/html")
+    public void deleteAddress(@PathParam("id") Long id) {
+
+        User user = userService.findById(id);
+
+        if (user != null) {
+            Address address = user.getAddress();
+            addressService.delete(address);
+        } else {
+            throw new RuntimeException(
+                    "Can't delete. User with id = " + id + "doesn't exist");
+        }
+
+    }
+
+    /**
+     * Delete user
+     *
+     * @param id
+     */
+    @DELETE
+    @Path("/{id}")
+    public void deleteUserById(@PathParam("id") Long id) {
+        userService.deleteById(id);
     }
 }

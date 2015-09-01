@@ -1,7 +1,9 @@
 package com.github.nvans.service;
 
 import com.github.nvans.dao.AddressDao;
+import com.github.nvans.dao.UserDao;
 import com.github.nvans.domain.Address;
+import com.github.nvans.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ public class AddressServiceImpl implements AddressService {
     @Autowired
     private AddressDao addressDao;
 
+    @Autowired
+    private UserDao userDao;
 
     @Override
     public Address findById(Long id) {
@@ -25,5 +29,16 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void save(Address address) {
         addressDao.save(address);
+    }
+
+    @Override
+    public void delete(Address address) {
+
+        User user = userDao.findByAddress(address);
+        user.setAddress(null);
+
+        userDao.save(user);
+
+        addressDao.delete(address);
     }
 }
