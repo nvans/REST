@@ -1,7 +1,9 @@
 package com.github.nvans.dao;
 
 import com.github.nvans.domain.Address;
+import com.github.nvans.domain.Group;
 import com.github.nvans.domain.User;
+import com.github.nvans.utils.exceptions.TransactionFailException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,9 +29,11 @@ public interface UserDao {
 
     List<User> findAllUsers();
 
-    void save(User user);
+    void save(User user) throws TransactionFailException;
 
-    void delete(User user);
+    void delete(User user) throws TransactionFailException;
 
     User findByAddress(Address address);
+
+    List<User> findByGroup(Group group);
 }

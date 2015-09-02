@@ -1,7 +1,8 @@
 package com.github.nvans.service;
 
-import com.github.nvans.dao.GroupDao;
 import com.github.nvans.dao.UserDao;
+import com.github.nvans.domain.Address;
+import com.github.nvans.domain.Group;
 import com.github.nvans.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Autowired
-    private GroupDao groupDao;
+    private GroupService groupService;
 
     @Autowired
     private Validator validator;
@@ -57,6 +58,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByBirthday(LocalDate birthday) {
         return userDao.findByBirthday(birthday);
+    }
+
+    @Override
+    public List<User> findUsersByGroup(Group group) {
+        return userDao.findByGroup(group);
     }
 
 
@@ -110,7 +116,7 @@ public class UserServiceImpl implements UserService {
         // Sets "UNDEFINED" group to new user
         // -->
         else if (user.getId() == null){
-            user.setGroup(groupDao.getDefaultGroup());
+            user.setGroup(groupService.getDefaultGroup());
         }
         // <--
 
@@ -124,13 +130,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        User user = userDao.findById(id);
-
-        if (user != null) {
-            userDao.delete(user);
-        }
+    public User findByAddress(Address address) {
+        return userDao.findByAddress(address);
     }
+
 
     /**
      * Check changes in user fields

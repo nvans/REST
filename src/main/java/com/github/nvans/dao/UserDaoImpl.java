@@ -1,9 +1,12 @@
 package com.github.nvans.dao;
 
 import com.github.nvans.domain.Address;
+import com.github.nvans.domain.Group;
 import com.github.nvans.domain.User;
+import com.github.nvans.utils.exceptions.TransactionFailException;
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -218,6 +221,7 @@ public class UserDaoImpl implements UserDao {
             );
 
             users.addAll(query.list());
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -229,19 +233,18 @@ public class UserDaoImpl implements UserDao {
 
     /**
      *
-     * Save/Update user instance to db
+     * Save/Update user to db
      *
      * @param user
      */
     @Override
-    public void save(User user) {
+    public void save(User user) throws TransactionFailException {
 
         Session session = null;
         Transaction tx = null;
 
         try {
-            session = this.sessionFactory.openSession();
-
+            session = sessionFactory.openSession();
 
             tx = session.beginTransaction();
 
@@ -258,9 +261,11 @@ public class UserDaoImpl implements UserDao {
         } finally {
             if (!tx.wasCommitted()) {
                 tx.rollback();
+
+                session.close();
+                throw new TransactionFailException("can't save/update");
             }
 
-            session.flush();
             session.close();
         }
     }
@@ -271,7 +276,7 @@ public class UserDaoImpl implements UserDao {
      * @param user
      */
     @Override
-    public void delete(User user) {
+    public void delete(User user) throws TransactionFailException{
         Session session = null;
         Transaction tx = null;
 
@@ -286,9 +291,12 @@ public class UserDaoImpl implements UserDao {
         } finally {
             if (!tx.wasCommitted()) {
                 tx.rollback();
+
+                session.close();
+
+                throw new TransactionFailException("can't delete");
             }
 
-            session.flush();
             session.close();
         }
     }
@@ -315,6 +323,31 @@ public class UserDaoImpl implements UserDao {
         }
 
         return user;
+    }
+
+    @Override
+    public List<User> findByGroup(Group group) {
+        Session session = null;
+        List<User> users = new ArrayList<>();
+
+        try {
+            session = sessionFactory.openSession();
+
+            Query query = session.createQuery(
+                    "SELECT u FROM User u WHERE u.group = :group"
+            );
+
+            query.setParameter("group", group);
+
+            users.addAll(query.list());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return users;
     }
 
 }

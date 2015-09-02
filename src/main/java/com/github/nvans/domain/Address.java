@@ -1,5 +1,8 @@
 package com.github.nvans.domain;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -16,13 +19,13 @@ public class Address {
 
     @Id
     @GeneratedValue
+    @Cascade(CascadeType.DELETE)
     private Long id;
     private String zip;
     private String country;
     private String city;
     private String district;
     private String street;
-
 
     // Getters and Setters
     // -->

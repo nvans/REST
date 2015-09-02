@@ -27,7 +27,6 @@ import java.time.LocalDate;
 @XmlType(propOrder = {"id", "firstname", "lastname", "username", "password", "email", "birthday", "address", "group"})
 @Entity
 @Table(name = "Users")
-@PrimaryKeyJoinColumn(name = "user_id")
 public class User implements TimeStamped {
 
     @Id
@@ -207,5 +206,17 @@ public class User implements TimeStamped {
         result = 31 * result + (createTS != null ? createTS.hashCode() : 0);
         result = 31 * result + (lastUpdateTS != null ? lastUpdateTS.hashCode() : 0);
         return result;
+    }
+
+    public static void main(String[] args) {
+        try {
+            System.out.println("try");
+            throw new Exception("E");
+        } catch (Exception e) {
+            System.out.println("catch");
+        } finally {
+            System.out.println("finally before");
+            throw new RuntimeException();
+        }
     }
 }

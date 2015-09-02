@@ -1,4 +1,4 @@
-package dbTests;
+package db_tests;
 
 import com.github.nvans.dao.AddressDao;
 import com.github.nvans.dao.UserDao;

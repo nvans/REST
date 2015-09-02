@@ -32,7 +32,7 @@ public class StaticDataInitializer {
     @Transactional
     private void createGroups() {
         for (GroupType groupType : GroupType.values()) {
-            System.out.println(groupType.asGroup());
+//            System.out.println(groupType.asGroup());
             groupDao.save(groupType.asGroup());
         }
     }

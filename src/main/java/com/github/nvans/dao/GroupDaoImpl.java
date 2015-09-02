@@ -1,6 +1,7 @@
 package com.github.nvans.dao;
 
 import com.github.nvans.domain.Group;
+import com.github.nvans.utils.exceptions.TransactionFailException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -21,11 +22,6 @@ public class GroupDaoImpl implements GroupDao {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    @Override
-    public Group getDefaultGroup() {
-        return findById(1);
-    }
 
     @Override
     public Group findById(Integer id) {
@@ -68,7 +64,7 @@ public class GroupDaoImpl implements GroupDao {
     }
 
     @Override
-    public void save(Group group) {
+    public void save(Group group) throws TransactionFailException {
         Session session = null;
         Transaction tx = null;
 
@@ -81,15 +77,44 @@ public class GroupDaoImpl implements GroupDao {
             tx.commit();
 
         } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
 
             if (!tx.wasCommitted()) {
                 tx.rollback();
+
+                session.close();
+                throw new TransactionFailException();
             }
 
-            e.printStackTrace();
+            session.close();
+        }
+    }
 
+    @Override
+    public void delete(Group group) throws TransactionFailException {
+        Session session = null;
+        Transaction tx = null;
+
+        try {
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+
+            session.delete(group);
+
+            tx.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            session.flush();
+            if (!tx.wasCommitted()) {
+                tx.rollback();
+
+                session.close();
+
+                throw new TransactionFailException();
+            }
+
             session.close();
         }
     }

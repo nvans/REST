@@ -5,14 +5,13 @@ import com.github.nvans.domain.User;
 import com.github.nvans.service.AddressService;
 import com.github.nvans.service.UserService;
 import com.github.nvans.service.UserServiceImpl;
+import com.github.nvans.utils.exceptions.TransactionFailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 
 /**
@@ -35,16 +34,21 @@ public class UserResource {
      *
      * @return List with all users or empty list
      */
+    // -->
     @GET
-    @Produces("application/json")
-    public List<User> getAllUsers() {
+    @Produces({"application/json", "application/xml"})
+    public Response getAllUsers() {
 
+        List<User> users = userService.findAllUsers();
 
-
-        return userService.findAllUsers();
+        if (users != null) {
+            return Response.ok().entity(userService.findAllUsers()).build();
+        } else {
+            return Response.serverError().build();
+        }
 
     }
-
+    // <--
 
     /**
      * Retrieve user by id
@@ -52,123 +56,85 @@ public class UserResource {
      * @param id
      * @return
      */
+    // -->
     @GET
-    @Produces({"application/json", "text/html"})
+    @Produces({"application/json", "application/xml"})
     @Path("{id}")
-    public User getUser(@PathParam("id") Long id) {
+    public Response getUser(@PathParam("id") Long id) {
 
         User user = userService.findById(id);
 
-        if (user == null) {
-            throw new RuntimeException("User with id = " + id + " not found.");
+        if (user != null) {
+            return Response.ok().entity(user).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-
-        return user;
     }
-
+    // <--
 
     /**
-     * Retrieve user creating form
      *
-     * @return
+     * Update user
+     *
      */
-    @GET
-    @Produces("text/html")
-    @Path("/new")
-    public String getUsersCreatingPage() {
+    // -->
+    @POST
+    @Consumes({"application/json", "application/xml"})
+    @Produces({"application/json", "application/xml"})
+    @Path("{id}")
+    public Response editUser(@PathParam("id") Long id, User user) {
 
-        return "<h1>User creating form</h1>";
+        if (user != null && id.equals(user.getId())) {
+            try {
+
+                userService.save(user);
+                return Response.ok().entity(user).build();
+
+            } catch (IllegalArgumentException e) {
+
+                return Response.status(Response.Status.BAD_REQUEST).build();
+
+            } catch (TransactionFailException e) {
+
+                return Response.serverError().build();
+            }
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
+    // <--
 
     /**
      * Create user
      *
      * @return
      */
+    // -->
     @POST
-//    @Consumes({"application/x-www-form-urlencoded", "application/json"})
-    @Produces({"text/html"})
+    @Consumes({ "application/json", "application/xml"})
+    @Produces({"application/json", "application/xml"})
     @Path("/new")
-    public Response createUser(
-                 /*  @FormParam("firstname") String firstname,
-                   @FormParam("lastname") String lastname,
-                   @FormParam("username") String username,
-                   @FormParam("password") String password,
-                   @FormParam("email") String email,
-                   @FormParam("birthday") LocalDate birthday,
-                   @FormParam("active") Boolean isActive*/) {
+    public Response createUser(User user) {
 
-
-        User user = new User();
-
-        user.setFirstname("firstname");
-        user.setLastname("lastname");
-        user.setBirthday(LocalDate.of(1989, Month.JUNE, 28));
-        user.setEmail("test@test.test");
-        user.setIsActive(true);
-        user.setUsername("test");
-        user.setPassword("test");
-
-        Address address = new Address();
-        address.setCountry("Russia");
-
-        user.setAddress(address);
+        if (user == null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
 
         try {
             userService.save(user);
-            user.setAddress(address);
-            userService.save(user);
-            return Response.seeOther(URI.create("" + user.getId())).build();
+
+            return Response.created(URI.create(user.getId() + "")).entity(user).build();
 
         } catch (IllegalArgumentException e) {
 
-            return Response.noContent().build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
+
+        } catch (TransactionFailException e) {
+
+            return Response.serverError().build();
         }
     }
-
-
-    /**
-     * Retrieve users address
-     *
-     * @param id
-     * @return address
-     */
-    @GET
-    @Path("{id}/address")
-    @Produces("application/json")
-    public Address getUserAddress(@PathParam("id") Long id) {
-        User user = userService.findById(id);
-        Address address = null;
-
-        if (user != null) {
-            address = user.getAddress();
-        }
-
-        return address;
-
-    }
-
-    /**
-     * Delete address
-     *
-     * @param id
-     */
-    @DELETE
-    @Path("{id}/address")
-    @Produces("text/html")
-    public void deleteAddress(@PathParam("id") Long id) {
-
-        User user = userService.findById(id);
-
-        if (user != null) {
-            Address address = user.getAddress();
-            addressService.delete(address);
-        } else {
-            throw new RuntimeException(
-                    "Can't delete. User with id = " + id + "doesn't exist");
-        }
-
-    }
+    // <--
 
     /**
      * Delete user
@@ -177,7 +143,117 @@ public class UserResource {
      */
     @DELETE
     @Path("/{id}")
-    public void deleteUserById(@PathParam("id") Long id) {
-        userService.deleteById(id);
+    // -->
+    public Response deleteUser(@PathParam("id") Long id) {
+        User user = userService.findById(id);
+
+        if (user != null) {
+            try {
+
+                userService.delete(user);
+                return Response.status(Response.Status.OK).build();
+
+            } catch (TransactionFailException e) {
+                return Response.serverError().build();
+            }
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
+    // <--
+
+    /**
+     * Retrieve users address
+     *
+     * @param id
+     * @return address
+     */
+    // -->
+    @GET
+    @Path("{id}/address")
+    @Produces({"application/json", "application/xml"})
+    public Response getUserAddress(@PathParam("id") Long id) {
+
+        User user = userService.findById(id);
+
+        if (user == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        Address address = user.getAddress();
+
+        if (address != null) {
+            return Response.ok().entity(address).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+    }
+    // <--
+
+    /**
+     * Address creating
+     *
+     */
+    // -->
+    @POST
+    @Path("{id}/address")
+    @Consumes({"application/json", "application/xml"})
+    @Produces({"application/json", "application/xml"})
+    public Response createAddress(@PathParam("id") Long id, Address address) {
+
+        try {
+
+            User user = userService.findById(id);
+
+            if (user == null || address == null) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
+            addressService.save(address);
+            user.setAddress(address);
+            userService.save(user);
+
+            return Response.created(URI.create(id + "/address")).entity(address).build();
+
+        } catch (TransactionFailException e) {
+            return Response.serverError().build();
+        }
+    }
+    // <--
+
+    /**
+     * Delete address
+     *
+     * @param id
+     */
+    // -->
+    @DELETE
+    @Path("{id}/address")
+    public Response deleteAddress(@PathParam("id") Long id) {
+
+        User user = userService.findById(id);
+
+        if (user == null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        Address address = user.getAddress();
+
+        if (address == null) {
+            return Response.ok().build();
+        }
+
+        try {
+            addressService.delete(address);
+
+            return Response.ok().build();
+
+        } catch (TransactionFailException e) {
+            return Response.serverError().build();
+        }
+
+    }
+    // <--
+
 }

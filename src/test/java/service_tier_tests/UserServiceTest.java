@@ -1,4 +1,4 @@
-package serviceTierTest;
+package service_tier_tests;
 
 import com.github.nvans.dao.UserDao;
 import com.github.nvans.domain.User;

@@ -1,6 +1,7 @@
 package com.github.nvans.service;
 
 import com.github.nvans.domain.Address;
+import com.github.nvans.domain.Group;
 import com.github.nvans.domain.User;
 
 import java.time.LocalDate;
@@ -15,6 +16,8 @@ public interface UserService {
 
     User findById(Long id);
 
+    List<User> findAllUsers();
+
     List<User> findByFirstname(String firstname);
 
     List<User> findByLastname(String lastname);
@@ -25,12 +28,11 @@ public interface UserService {
 
     List<User> findByBirthday(LocalDate birthday);
 
-
-    List<User> findAllUsers();
+    List<User> findUsersByGroup(Group group);
 
     void save(User user) throws IllegalArgumentException;
 
     void delete(User user);
 
-    void deleteById(Long id);
+    User findByAddress(Address address);
 }

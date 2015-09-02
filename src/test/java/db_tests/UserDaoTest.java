@@ -1,4 +1,4 @@
-package dbTests;
+package db_tests;
 
 import com.github.nvans.dao.UserDao;
 import com.github.nvans.domain.User;
@@ -22,7 +22,7 @@ public class UserDaoTest {
     private UserDao userDao;
 
     @BeforeClass
-    public static void setUpBeforeClass() {
+    public static void setUpContext() {
         ctx = new ClassPathXmlApplicationContext("META-INF/applicationContext.xml");
 
     }

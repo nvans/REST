@@ -36,7 +36,6 @@ public class AddressServiceImpl implements AddressService {
 
         User user = userDao.findByAddress(address);
         user.setAddress(null);
-
         userDao.save(user);
 
         addressDao.delete(address);

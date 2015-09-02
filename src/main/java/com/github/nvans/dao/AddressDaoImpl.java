@@ -1,6 +1,7 @@
 package com.github.nvans.dao;
 
 import com.github.nvans.domain.Address;
+import com.github.nvans.utils.exceptions.TransactionFailException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -51,7 +52,7 @@ public class AddressDaoImpl implements AddressDao {
      * @param address
      */
     @Override
-    public void save(Address address) {
+    public void save(Address address) throws TransactionFailException {
         Session session = null;
         Transaction tx = null;
 
@@ -67,6 +68,11 @@ public class AddressDaoImpl implements AddressDao {
         } finally {
             if (!tx.wasCommitted()) {
                 tx.rollback();
+
+                session.flush();
+                session.close();
+
+                throw new TransactionFailException();
             }
 
             session.flush();
@@ -80,7 +86,7 @@ public class AddressDaoImpl implements AddressDao {
      * @param address
      */
     @Override
-    public void delete(Address address) {
+    public void delete(Address address) throws TransactionFailException{
         Session session = null;
         Transaction tx = null;
 
@@ -96,6 +102,11 @@ public class AddressDaoImpl implements AddressDao {
 
             if (!tx.wasCommitted()) {
                 tx.rollback();
+
+                session.flush();
+                session.close();
+
+                throw new TransactionFailException("can't delete");
             }
 
             session.flush();

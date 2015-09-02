@@ -1,6 +1,7 @@
 package com.github.nvans.dao;
 
 import com.github.nvans.domain.Group;
+import com.github.nvans.utils.exceptions.TransactionFailException;
 
 import java.util.List;
 
@@ -11,11 +12,11 @@ import java.util.List;
  */
 public interface GroupDao {
 
-    Group getDefaultGroup();
-
     Group findById(Integer id);
 
     List<Group> findAllGroups();
 
-    void save(Group group);
+    void save(Group group) throws TransactionFailException;
+
+    void delete(Group group) throws TransactionFailException;
 }
