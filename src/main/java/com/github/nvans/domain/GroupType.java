@@ -11,13 +11,15 @@ public enum GroupType {
     DEVELOPERS(3, "DEVELOPERS"),
     TESTERS(4, "TESTERS");
 
-    private final Integer id;
-    private final String groupName;
+    private Integer id;
+    private  String groupName;
+
 
     GroupType(Integer id, String groupName) {
         this.id = id;
         this.groupName = groupName;
     }
+
 
     public Integer getId() {
         return id;

@@ -1,17 +1,21 @@
 package rest_api_tests;
 
 import com.github.nvans.domain.Address;
+import com.github.nvans.domain.Group;
+import com.github.nvans.domain.GroupType;
 import com.github.nvans.domain.User;
 import com.github.nvans.resource.UserResource;
 import com.github.nvans.service.AddressService;
 import com.github.nvans.service.UserService;
 import helpers.DBUtils;
-import helpers.UserList;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spring.SpringLifecycleListener;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -21,10 +25,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import java.io.StringReader;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.Month;
@@ -65,6 +65,7 @@ public class UserRestServiceTest {
         server = startServer();
         client = ClientBuilder.newClient();
         ctx = new ClassPathXmlApplicationContext("META-INF/applicationContext.xml");
+        initDB();
 
     }
     // <--
@@ -75,8 +76,7 @@ public class UserRestServiceTest {
      * todo: replace with sql
      */
     // -->
-    @BeforeClass
-    public static void initDB() {
+    private static void initDB() {
         userService = (UserService) ctx.getBean("userService");
         addressService = (AddressService) ctx.getBean("addressService");
 
@@ -88,6 +88,7 @@ public class UserRestServiceTest {
         user.setIsActive(true);
         user.setUsername("test");
         user.setPassword("test");
+        user.setGroup(GroupType.DEVELOPERS.asGroup());
 
         userService.save(user);
 
@@ -99,6 +100,7 @@ public class UserRestServiceTest {
         user1.setIsActive(true);
         user1.setUsername("petr");
         user1.setPassword("petr");
+        user.setGroup(GroupType.MANAGERS.asGroup());
 
         userService.save(user1);
 
@@ -140,44 +142,6 @@ public class UserRestServiceTest {
     }
     // <--
 
-    /**
-     * All users test
-     *
-     */
-    // -->
-    @Test
-    public void testGetAllUsers() {
-        WebTarget target = client.target(BASE_URI);
-        Response response = target.path("/users").request(MediaType.APPLICATION_XML).get();
-
-        // Save XML body for unmarshalling
-        String users = response.readEntity(String.class);
-
-        Assert.assertNotNull(users);
-
-        // try to unmarshalling XML
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(UserList.class);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
-            UserList userList = (UserList) unmarshaller.unmarshal(new StringReader(users));
-
-            // Test users existing
-            for (User u: userList.getUsers()) {
-                Assert.assertNotNull("User == null", u);
-            }
-
-            User user = userList.getUsers().get(0);
-            Assert.assertEquals("", "Ivan", user.getFirstname());
-
-
-
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
-
-    }
-    // <--
 
     /**
      * Unique user test.
@@ -227,11 +191,11 @@ public class UserRestServiceTest {
      */
     // -->
     @Test
-    public void testCreateUser() {
+    public void testUserCrud() {
 
         WebTarget target = client.target(BASE_URI);
 
-        // Create new user
+        // Init new user
         User user = new User();
         user.setFirstname("John");
         user.setLastname("Smith");
@@ -241,7 +205,10 @@ public class UserRestServiceTest {
         user.setBirthday(LocalDate.of(1985, Month.DECEMBER, 31));
         user.setIsActive(true);
 
-        // post request
+
+
+        /************* Test create *************/
+        // Create request
         Response response = target
                 .path("users/new")
                 .request()
@@ -250,23 +217,54 @@ public class UserRestServiceTest {
         // read response
         User userResponse = response.readEntity(User.class);
 
-        Assert.assertEquals("John", userResponse.getFirstname());
         Assert.assertNotNull(userResponse);
+        Assert.assertEquals(user.getFirstname(), userResponse.getFirstname());
         Assert.assertNotNull(userResponse.getId());
+        // <--
 
+
+        /************* Test update *************/
+        user = userResponse;
+        user.setUsername("SmithJohn");
+        response = target
+                    .path("users/" + userResponse.getId())
+                    .request()
+                    .post(Entity.entity(user, MediaType.APPLICATION_JSON));
+
+        userResponse = response.readEntity(User.class);
+
+        Assert.assertNotNull(userResponse);
+        Assert.assertEquals(user.getUsername(), userResponse.getUsername());
+        Assert.assertEquals(user.getId(), userResponse.getId());
+
+        user = userResponse;
+
+
+        /************* Test delete *************/
         // delete user
-        userService.delete(user);
+        target.path("users/" + user.getId())
+              .request()
+              .delete();
+
+        userResponse = userService.findById(user.getId());
+        Assert.assertNull("User exists in db", userResponse);
+
+
     }
     // <--
 
+
+
     /**
-     * Address creating test
+     * Address CRUD tests
      */
     // -->
     @Test
-    public void testCreateDeleteAddress(){
+    public void testAddressCRUD(){
         WebTarget target = client.target(BASE_URI);
 
+        /** Initialization **/
+        // -->
         // Create new user
         User user = new User();
         user.setFirstname("John");
@@ -286,8 +284,10 @@ public class UserRestServiceTest {
         address.setDistrict("District");
         address.setZip("Zip");
         address.setStreet("Street");
+        // <--
 
-        // POST request
+        /************* Test create *************/
+        // -->
         Response response = target
                 .path("users/" + user.getId() + "/address")
                 .request()
@@ -301,11 +301,86 @@ public class UserRestServiceTest {
         // reload user
         user = userService.findById(user.getId());
         Assert.assertEquals("Addresses is not equals", addressResponse, user.getAddress());
+        // <--
 
-        response = target.path("users/" + user.getId() + "/address").request().delete();
+        /************* Test update *************/
+        // -->
+        addressResponse.setStreet("changed");
 
-        // delete user (address will remove by cascading)
+        response = target
+                .path("users/" + user.getId() + "/address")
+                .request()
+                .post(Entity.entity(addressResponse, MediaType.APPLICATION_JSON));
+
+        addressResponse = response.readEntity(Address.class);
+        Assert.assertNotNull(addressResponse);
+
+        // reload user
+        user = userService.findById(user.getId());
+
+        Assert.assertEquals("Addresses is not equals", addressResponse, user.getAddress());
+        // <--
+
+        /************* Test delete *************/
+        // -->
+        target.path("users/" + user.getId() + "/address")
+              .request()
+              .delete();
+
+        // reload user
+        user = userService.findById(user.getId());
+        Assert.assertNull("Address exist", user.getAddress());
+
+        // delete user
         userService.delete(user);
+        // <--
     }
     // <--
+
+    /**
+     * Group CRUD tests
+     *
+     */
+    @Test
+    public void testGroupCRUD() {
+        WebTarget target = client.target(BASE_URI);
+
+        /************* Test create *************/
+        Group group = new Group();
+        group.setName("CEO");
+//        group.setId(5);
+
+        Response response = target
+                    .path("groups/new")
+                    .request()
+                    .post(Entity.entity(group, MediaType.APPLICATION_JSON));
+
+
+
+        Group groupResponse = response.readEntity(Group.class);
+
+        System.out.println(groupResponse);
+
+        Assert.assertNotNull(groupResponse);
+        Assert.assertNotNull(groupResponse.getId());
+        Assert.assertEquals(group.getName(), groupResponse.getName());
+
+        group = groupResponse;
+
+        /************* Test update *************/
+        group.setName("EX CEO");
+
+        response = target
+                    .path("groups/" + group.getId())
+                    .request()
+                    .post(Entity.entity(group, MediaType.APPLICATION_JSON));
+
+        groupResponse = response.readEntity(Group.class);
+
+        Assert.assertNotNull(groupResponse);
+        Assert.assertEquals(group.getName(), groupResponse.getName());
+        Assert.assertEquals(group.getId(), groupResponse.getId());
+
+
+    }
 }

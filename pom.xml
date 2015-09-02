@@ -22,6 +22,14 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -95,7 +103,6 @@
             </exclusions>
         </dependency>
 
-
         <!-- JPA -->
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
@@ -123,6 +130,7 @@
             <version>2.3.1</version>
         </dependency>
 
+        <!-- MySqlDB-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

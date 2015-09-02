@@ -35,6 +35,12 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void save(Group group) {
+
+        if (group.getId() == null) {
+            int i = groupDao.getCount() + 1;
+            group.setId(i);
+        }
+
         groupDao.save(group);
     }
 }

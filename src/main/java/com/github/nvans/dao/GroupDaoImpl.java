@@ -2,10 +2,8 @@ package com.github.nvans.dao;
 
 import com.github.nvans.domain.Group;
 import com.github.nvans.utils.exceptions.TransactionFailException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -64,6 +62,20 @@ public class GroupDaoImpl implements GroupDao {
     }
 
     @Override
+    public Integer getCount() {
+        Session session = sessionFactory.openSession();
+
+        Long count = (Long) session
+                .createCriteria(Group.class)
+                .setProjection(Projections.rowCount())
+                .uniqueResult();
+
+
+
+        return count.intValue();
+    }
+
+    @Override
     public void save(Group group) throws TransactionFailException {
         Session session = null;
         Transaction tx = null;
@@ -72,7 +84,12 @@ public class GroupDaoImpl implements GroupDao {
             session = sessionFactory.openSession();
             tx = session.beginTransaction();
 
-            session.save(group);
+
+            if (group.getId() == null) {
+                session.persist(group);
+            } else {
+                session.saveOrUpdate(group);
+            }
 
             tx.commit();
 

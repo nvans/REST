@@ -16,6 +16,8 @@ public interface GroupDao {
 
     List<Group> findAllGroups();
 
+    Integer getCount();
+
     void save(Group group) throws TransactionFailException;
 
     void delete(Group group) throws TransactionFailException;

@@ -266,6 +266,7 @@ public class UserDaoImpl implements UserDao {
                 throw new TransactionFailException("can't save/update");
             }
 
+            session.flush();
             session.close();
         }
     }
@@ -297,6 +298,7 @@ public class UserDaoImpl implements UserDao {
                 throw new TransactionFailException("can't delete");
             }
 
+            session.flush();
             session.close();
         }
     }

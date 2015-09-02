@@ -15,7 +15,8 @@ import java.net.URI;
 import java.util.List;
 
 /**
- * Created by nvans on 27.08.2015.
+ *
+ * User resources
  *
  * @author Ivan Konovalov
  */
@@ -30,23 +31,18 @@ public class UserResource {
     private AddressService addressService;
 
     /**
-     * Retrieving all existing users from DB as JSON
+     * Retrieve all existing users from DB as JSON
      *
      * @return List with all users or empty list
      */
     // -->
     @GET
     @Produces({"application/json", "application/xml"})
-    public Response getAllUsers() {
+    public List<User> getAllUsers() {
 
         List<User> users = userService.findAllUsers();
 
-        if (users != null) {
-            return Response.ok().entity(userService.findAllUsers()).build();
-        } else {
-            return Response.serverError().build();
-        }
-
+        return users;
     }
     // <--
 
@@ -245,6 +241,9 @@ public class UserResource {
         }
 
         try {
+            user.setAddress(null);
+            userService.save(user);
+
             addressService.delete(address);
 
             return Response.ok().build();
