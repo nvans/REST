@@ -19,7 +19,8 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 
 /**
- * Created by nvans on 27.08.2015.
+ *
+ * User domain
  *
  * @author Ivan Konovalov
  */

@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Created by nvans on 27.08.2015.
+ * Group domain.
  *
  * @author Ivan Konovalov
  */

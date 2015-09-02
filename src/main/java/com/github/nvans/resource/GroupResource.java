@@ -14,7 +14,8 @@ import java.net.URI;
 import java.util.List;
 
 /**
- * Created by nvans on 02.09.2015.
+ *
+ * Group resources
  *
  * @author Ivan Konovalov
  */

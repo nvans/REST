@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
- * This adapter just for customizing XML representation of Date object.
+ * This adapter just for customizing XML/json representation of Date object.
  * Use this with XmlJavaTypeAdapter annotation
  * which need to be placed above a necessary getter.
  * (if place this annotation above field - you can get an error)

@@ -10,7 +10,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 /**
- * Created by nvans on 31.08.2015.
+ *
+ * Insert/Update audit and
+ * Timestamps generation
+ *
  *
  * @author Ivan Konovalov
  */
