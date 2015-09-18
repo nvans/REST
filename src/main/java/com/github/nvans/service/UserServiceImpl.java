@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      *
-     * User before saving processing
+     * Processing user before saving
      *
      * @param user
      * @throws IllegalArgumentException
@@ -146,4 +146,6 @@ public class UserServiceImpl implements UserService {
 
         return !user.equals(testUser);
     }
+
+
 }

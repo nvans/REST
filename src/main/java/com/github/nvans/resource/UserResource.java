@@ -4,7 +4,6 @@ import com.github.nvans.domain.Address;
 import com.github.nvans.domain.User;
 import com.github.nvans.service.AddressService;
 import com.github.nvans.service.UserService;
-import com.github.nvans.service.UserServiceImpl;
 import com.github.nvans.utils.exceptions.TransactionFailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,7 +24,7 @@ import java.util.List;
 public class UserResource {
 
     @Autowired
-    private UserService userService = new UserServiceImpl();
+    private UserService userService;
 
     @Autowired
     private AddressService addressService;

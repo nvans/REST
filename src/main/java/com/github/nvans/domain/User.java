@@ -209,15 +209,4 @@ public class User implements TimeStamped {
         return result;
     }
 
-    public static void main(String[] args) {
-        try {
-            System.out.println("try");
-            throw new Exception("E");
-        } catch (Exception e) {
-            System.out.println("catch");
-        } finally {
-            System.out.println("finally before");
-            throw new RuntimeException();
-        }
-    }
 }
